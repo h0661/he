@@ -1,4 +1,3 @@
-
 #include "stdio.h"
 #include "stdlib.h"
 
@@ -12,37 +11,42 @@ struct BSTreeNode			//a node in the binary sort tree
 
 
 /*create Binary Sort Tree*/
-BSTreeNode* BSTreeCreate(int value)
+BSTreeNode* BSTreeCreate(BSTreeNode **root,int value)
 {
-	BSTreeNode *root = (BSTreeNode *)malloc(sizeof(BSTreeNode));
+	*root = (BSTreeNode *)malloc(sizeof(BSTreeNode));
 	if(NULL==root)
 	{	
 		printf("Binary Sort Tree malloc failed!\n");
 	}	
 	else
 	{
-		root->m_nValue = value;
-		root->m_pLeft  = NULL;
-		root->m_pRight = NULL;
+		(*root)->m_nValue = value;
+		(*root)->m_pLeft  = NULL;
+		(*root)->m_pRight = NULL;
 	}
-	return root;
+	return *root;
 }
 /*destory Binary Sort Tree*/
 void BSTreeDestory(BSTreeNode *root)
 {
 	if(NULL==root)
 	{
+		printf("The node is NULL!\n");
 		return;
 	}
+	else
+	{
+		printf("current node:%d\n",root->m_nValue);
+	}
 
-	if(root->m_pLeft!=NULL)
-	{
-		BSTreeDestory(root->m_pLeft);
-	}
-	if(root->m_pRight!=NULL)
-	{
+//	if(root->m_pRight!=NULL)
+//	{
 		BSTreeDestory(root->m_pRight);
-	}
+//	}
+//	if(root->m_pLeft!=NULL)
+  //      {
+                BSTreeDestory(root->m_pLeft);
+    //    }
 	free(root);
 	
 }
@@ -52,15 +56,39 @@ BSTreeNode* BSTreeInsertNode(BSTreeNode *root,int value)
 {
 	if(root ==NULL)
 	{
-		root = BSTreeCreate(value);
+		//*root = BSTreeCreate(&root,value);
+		printf("the parent root is NULL!\n");
+		return NULL;
 	}
-	else if(value<root->m_nValue)
+	if(value<root->m_nValue)
 	{
-		root->m_pLeft = BSTreeInsertNode(root->m_pLeft,value);
+		if(NULL==root->m_pLeft)
+		{
+			root->m_pLeft = (BSTreeNode *)malloc(sizeof(BSTreeNode));
+			root->m_pLeft->m_nValue = value;
+			root->m_pLeft->m_pLeft =NULL;
+			root->m_pLeft->m_pRight =NULL;
+		}
+		else
+		{
+	
+			//root->m_pLeft =
+			 BSTreeInsertNode(root->m_pLeft,value);
+		}
 	}
 	else if(value>root->m_nValue)
 	{
-		root->m_pRight = BSTreeInsertNode(root->m_pRight,value);
+		if(NULL==root->m_pRight)
+		{
+			root->m_pRight =(BSTreeNode*)malloc(sizeof(BSTreeNode));
+			root->m_pRight->m_nValue =value;
+			root->m_pRight->m_pLeft = NULL;
+			root->m_pRight->m_pRight =NULL;
+		}
+		else
+		{
+			BSTreeInsertNode(root->m_pRight,value);
+		}
 	}
 	return root;
 }
@@ -170,6 +198,17 @@ BSTreeNode* BSTreeToDoubleList(BSTreeNode* root)
 
 	return ConvertNode(root,1);
 }
+void DoubleLinkListDestory(BSTreeNode* root)
+{
+	BSTreeNode * p =root;
+	BSTreeNode * tmp=NULL;
+	while(p!=NULL)
+	{	
+		tmp=p;
+		p=p->m_pRight;
+		free(tmp);
+	}
+}
 
 /*print Binary Sort Tree*/
 void BSTreePrint(BSTreeNode* root)
@@ -243,7 +282,8 @@ int main(void)
 	BSTreeNode *pDoubleLinkHead = NULL;
 		
 	printf("Binary Sort Tree:10 6 14 4 8 12 16 \n");
-	pRoot =BSTreeInsertNode(pRoot,10);
+//	pRoot =
+	BSTreeCreate(&pRoot,10);
 	BSTreeInsertNode(pRoot,6);
 	BSTreeInsertNode(pRoot,14);
 	BSTreeInsertNode(pRoot,4);
@@ -257,13 +297,15 @@ int main(void)
 	BSTreePrint(pRoot);
 
 	pDoubleLinkHead = ConvertNodeByMid(pRoot);
-//	pDoubleLinkHead = BSTreeToDoubleList(pRoot);
 	DoubleListPrint(pDoubleLinkHead);
+//	pDoubleLinkHead = BSTreeToDoubleList(pRoot);
+//	DoubleListPrint(pDoubleLinkHead);
+
+	
 
 
-
-
-	BSTreeDestory(pRoot);
+//	BSTreeDestory(pRoot);
+	DoubleLinkListDestory(pDoubleLinkHead);
 
 	return 0;
 }
