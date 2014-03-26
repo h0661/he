@@ -51,6 +51,7 @@ void convetToDoubleList(BSTreeNode* pCurrent)
 int main()
 {
 	printf("BSTreeToDoubleList!\n");
+	printf("BSTreeToDoubleList!\n");
 }
 
 
