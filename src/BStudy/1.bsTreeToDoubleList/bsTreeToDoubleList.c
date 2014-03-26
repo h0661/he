@@ -1,58 +1,159 @@
-//1.构造二叉查找树
-//2.中序遍历二叉查找树,因此结点按从小到大顺序访问,假设之前访问的结点己经调整为一个双向链表,那么只需要将当前结点连接至双赂链表的最后一个结点即可,访问完后那么只需要将当前结点连接至双赂链表的最后一个结点即可,假设之前访问完后访问完后双向链表也就调整完了.
-
 
 #include "stdio.h"
+#include "stdlib.h"
+
 typedef struct BSTreeNode BSTreeNode;
 struct BSTreeNode
 {
 	int m_nValue;        //value of node
-	BSTreeNode *m_pLeft; //left childe of node
-	BSTreeNode *m_pRight;
+	struct BSTreeNode *m_pLeft; //left childe of node
+	struct BSTreeNode *m_pRight;
 };
-void addBSTreeNode(BSTreeNode *&pCurrent,int value);
-void inOrderBSTree(BSTreeNode *pBStree);
-void BSTreeToDoubleList(BSTreeNode *pCurrent);
+
 
 BSTreeNode *pHead = NULL; 
-BSTreeNode *pIndex = NULL;
 
-/*建立二叉排序树*/
-void addBSTreeNode(BSTreeNode *&pCurrent,int value)
+
+/*create Binary Sort Tree*/
+BSTreeNode* BSTreeCreate(int value)
 {
-	if(NULL==pCurrent)
-	{
-		BSTreeNode *pBSTree = new BSTreeNode();
-		pBSTree->m_nvalue = value;
-		pBSTree->m_pLeft = NULL;
-		pBSTree->m_pRight= NULL;
-		pCurrent = pBSTree;	
-	}
-	else if(pCurrent->m_nValue<value)
-	{
-		addBSTreeNode(pCurrent->m_pRight,value);
-	}	
-	else if(pCurrent->m_nValue<value)
-	{
-		addBSTreeNode(pCurrent->m_pLeft,value);
+	BSTreeNode *root = (BSTreeNode *)malloc(sizeof(BSTreeNode));
+	if(NULL==root)
+	{	
+		printf("Binary Sort Tree malloc failed!\n");
 	}	
 	else
 	{
-		printf("node repeated!\n");
+		root->m_nValue = value;
+		root->m_pLeft  = NULL;
+		root->m_pRight = NULL;
 	}
+	return root;
 }
+/*destory Binary Sort Tree*/
+void BSTreeDestory(BSTreeNode *root)
+{
+	if(root!=NULL)
+	{
+		if(root->m_pLeft!=NULL)
+		{
+			BSTreeDestory(root->m_pLeft);
+		}
+		if(root->m_pRight!=NULL)
+		{
+			BSTreeDestory(root->m_pRight);
+		}
+	}
+	free(root);
+	
+}
+
+/*insert Binary Sort Tree*/
+BSTreeNode* BSTreeInsertNode(BSTreeNode *root,int value)
+{
+	if(root ==NULL)
+	{
+		root = BSTreeCreate(value);
+	}
+	else if(value<root->m_nValue)
+	{
+		root->m_pLeft = BSTreeInsertNode(root->m_pLeft,value);
+	}
+	else if(value>root->m_nValue)
+	{
+		root->m_pRight = BSTreeInsertNode(root->m_pRight,value);
+	}
+	return root;
+}
+
+
+
+
+BSTreeNode* BSTreeToDoubleList(BSTreeNode* root)
+{
+	BSTreeNode *head=NULL,*tail=NULL;
+
+
+	return head;
+}
+
 void inOrderBSTree(BSTreeNode* pBSTree)
 {
+	if(NULL==pBSTree)
+	{
+		return;
+	}
+	if(NULL!=pBSTree->m_pLeft)
+	{
+		inOrderBSTree(pBSTree->m_pLeft);
+	}
+//	convertToDoubleList(pBSTree);
+
+	if(NULL!=pBSTree->m_pRight)
+	{
+		inOrderBSTree(pBSTree->m_pRight);
+	}
 }
-void convetToDoubleList(BSTreeNode* pCurrent)
+/*print Binary Sort Tree*/
+void BSTreePrint(BSTreeNode* root)
 {
-}
+	if(NULL!=root)
+	{
+		
+		printf("%d  ",root->m_nValue);
+	
+		if(root->m_pLeft!=NULL)
+		{
+			BSTreePrint(root->m_pLeft);
+		}
 
-int main()
+		if(root->m_pRight!=NULL)
+		{
+			BSTreePrint(root->m_pRight);
+		}
+
+		
+	}
+	else 
+	{
+		printf("Binary Sort Tree is empty!\n");
+	}
+}
+void DoubleListPrint(BSTreeNode* head)
 {
-	printf("BSTreeToDoubleList!\n");
-	printf("BSTreeToDoubleList2!\n");
-	printf("BSTreeToDoubleList3!\n");
+	if(NULL!=head)
+	{
+		while(NULL!=head)
+		{
+			printf("%d ",head->m_nValue);
+		}
+		printf("\n");
+	}
+	else
+	{
+		printf("DoubleList is empty!\n");
+	}
 }
 
+int main(void)
+{
+	BSTreeNode *pRoot = NULL;
+	BSTreeNode *pDoubleLinkHead = NULL;
+		
+	printf("Binary Sort Tree��10 6 14 4 8 12 16\n");
+	pRoot =BSTreeInsertNode(pRoot,10);
+	BSTreeInsertNode(pRoot,6);
+	BSTreeInsertNode(pRoot,14);
+	BSTreeInsertNode(pRoot,4);
+	BSTreeInsertNode(pRoot,8);
+	BSTreeInsertNode(pRoot,12);
+	BSTreeInsertNode(pRoot,16);
 
+	BSTreePrint(pRoot);
+	pDoubleLinkHead = BSTreeToDoubleList(pRoot);
+	DoubleListPrint(pDoubleLinkHead);
+
+	BSTreeDestory(pRoot);
+
+	return 0;
+}
