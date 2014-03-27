@@ -3,15 +3,12 @@
 #include "stdlib.h"
 
 typedef struct BSTreeNode BSTreeNode;
-struct BSTreeNode
+struct BSTreeNode			//a node in the binary sort tree
 {
 	int m_nValue;        //value of node
 	struct BSTreeNode *m_pLeft; //left childe of node
-	struct BSTreeNode *m_pRight;
+	struct BSTreeNode *m_pRight;//right child of node
 };
-
-
-BSTreeNode *pHead = NULL; 
 
 
 /*create Binary Sort Tree*/
@@ -66,55 +63,104 @@ BSTreeNode* BSTreeInsertNode(BSTreeNode *root,int value)
 	return root;
 }
 
-BSTreeNode* ConvertNode(BSTreeNode* pNode,int asRight)
+BSTreeNode* ConvertNodeByMid(BSTreeNode* pNode) 
 {
-	BSTreeNode *pLeft = NULL;
-	BSTreeNode *pRight= NULL;
-	 BSTreeNode *pTemp = pNode;
-
-	if(pNode==NULL)
+	BSTreeNode *pTemp = pNode;
+	static BSTreeNode *pHead = NULL;     
+	static BSTreeNode *pTail = NULL;
+	
+	if(NULL == pTemp)
+	{
+		printf("the Binary Sort Tree is empty!\n");
 		return NULL;
-	if(pNode->m_pLeft)
-		pLeft = ConvertNode(pNode->m_pLeft,0);
+	}
+	//Convert the left sub-tree
+	if(NULL!=pTemp->m_pLeft)
+	{
+		ConvertNodeByMid(pTemp->m_pLeft);
+	}
 
-	if(pLeft!=NULL)
+	// Put the current node into the double list
+	if(NULL==pHead)
+	{
+		pHead=pTemp;
+		pTail=pTemp;
+	}
+	else
+	{
+		pTail->m_pRight = pTemp;
+		pTemp->m_pLeft = pTail;
+		pTail =pTemp;
+	}
+	//Convert the right sub-tree
+	if(NULL!=pTemp->m_pRight)
+	{
+		ConvertNodeByMid(pTemp->m_pRight);
+	}
+
+	return pHead;
+}
+
+
+BSTreeNode* ConvertNode(BSTreeNode* pNode,int isRight)
+{
+	BSTreeNode *pTemp = pNode;
+	BSTreeNode *pLeft = NULL;
+	BSTreeNode *pRight =NULL;
+
+	if(NULL==pNode)
+	{
+		printf("the Binary Sort Tree is empty!\n");
+		return NULL;
+	}
+	
+	//Convert the left sub-tree
+	if(NULL!=pNode->m_pLeft)
+	{
+		pLeft = ConvertNode(pNode->m_pLeft,0);
+	}
+	
+	//Convert the left sub-tree
+	if(NULL!=pNode->m_pRight)
+	{
+		pRight=ConvertNode(pNode->m_pRight,1);
+	}
+
+	//Connect the pleft to the current node
+	if(NULL!=pLeft)
 	{
 		pLeft->m_pRight = pNode;
-		pNode->m_pLeft =pLeft;
+		pNode->m_pLeft = pLeft;
 	}
-	if(pNode->m_pRight)
-	{
-		pRight =ConvertNode(pNode->m_pRight,1);
-	}
-
-
 	
-		if(pRight!=NULL)
-       {
-             pNode->m_pRight = pRight;
-             pRight->m_pLeft = pNode;
-       }
+	//Connect the pRight to the current node 
+	if(NULL!=pRight)
 
-      
-      // If the current node is the right child of its parent,
-      // return the least node in the tree whose root is the current node
-      if(1==asRight)
-       {
-            while(pTemp->m_pLeft!=NULL)
-                   pTemp = pTemp->m_pLeft;
-       }
-      // If the current node is the left child of its parent,
-      // return the greatest node in the tree whose root is the current node
-      else
-       {
-            while(pTemp->m_pRight!=NULL)
-                   pTemp = pTemp->m_pRight;
-       }
-	   
+	{
+		pNode->m_pRight = pRight;
+		pRight->m_pLeft =pNode;
+	}
+	
+	//if right return to the head if left return to the tail;
+	if(1==isRight)
+	{
+		while(pNode->m_pLeft!=NULL)
+		{	
+			pNode =pNode->m_pLeft;
+		}
+	}
+	else
+	{
+		while(pNode->m_pRight!=NULL)
+		{	
+			pNode =pNode->m_pRight;
+		}
+	}
+	
 
-    return pTemp;
-	//	
+	return pNode;
 }
+
 
 
 BSTreeNode* BSTreeToDoubleList(BSTreeNode* root)
@@ -123,23 +169,6 @@ BSTreeNode* BSTreeToDoubleList(BSTreeNode* root)
 	return ConvertNode(root,1);
 }
 
-void inOrderBSTree(BSTreeNode* pBSTree)
-{
-	if(NULL==pBSTree)
-	{
-		return;
-	}
-	if(NULL!=pBSTree->m_pLeft)
-	{
-		inOrderBSTree(pBSTree->m_pLeft);
-	}
-//	convertToDoubleList(pBSTree);
-
-	if(NULL!=pBSTree->m_pRight)
-	{
-		inOrderBSTree(pBSTree->m_pRight);
-	}
-}
 /*print Binary Sort Tree*/
 void BSTreePrint(BSTreeNode* root)
 {
@@ -199,7 +228,9 @@ int main(void)
 	BSTreeInsertNode(pRoot,16);
 
 	BSTreePrint(pRoot);
-	pDoubleLinkHead = BSTreeToDoubleList(pRoot);
+	//printf("\n £º");
+	pDoubleLinkHead = ConvertNodeByMid(pRoot);
+//	pDoubleLinkHead = BSTreeToDoubleList(pRoot);
 	DoubleListPrint(pDoubleLinkHead);
 
 	BSTreeDestory(pRoot);
