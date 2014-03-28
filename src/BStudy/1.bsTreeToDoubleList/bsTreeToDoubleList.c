@@ -30,16 +30,18 @@ BSTreeNode* BSTreeCreate(int value)
 /*destory Binary Sort Tree*/
 void BSTreeDestory(BSTreeNode *root)
 {
-	if(root!=NULL)
+	if(NULL==root)
 	{
-		if(root->m_pLeft!=NULL)
-		{
-			BSTreeDestory(root->m_pLeft);
-		}
-		if(root->m_pRight!=NULL)
-		{
-			BSTreeDestory(root->m_pRight);
-		}
+		return;
+	}
+
+	if(root->m_pLeft!=NULL)
+	{
+		BSTreeDestory(root->m_pLeft);
+	}
+	if(root->m_pRight!=NULL)
+	{
+		BSTreeDestory(root->m_pRight);
 	}
 	free(root);
 	
@@ -212,13 +214,35 @@ void DoubleListPrint(BSTreeNode* head)
 		printf("DoubleList is empty!\n");
 	}
 }
+void BSTreeMirro(BSTreeNode *pNode)
+{
+	BSTreeNode *pTemp=pNode;
+	BSTreeNode *pTmp=NULL;
+	if(NULL==pTemp)
+	{
+		printf("the Binary Sort Tree node is empty!\n");
+		return;
+	}
+	pTmp= pTemp->m_pRight;
+	pTemp->m_pRight=pTemp->m_pLeft;
+	pTemp->m_pLeft =pTmp;
 
+
+	if(NULL!=pTemp->m_pLeft)
+	{
+		BSTreeMirro(pTemp->m_pLeft);
+	}
+	if(NULL!=pTemp->m_pRight)
+	{
+		BSTreeMirro(pTemp->m_pRight);
+	}
+}
 int main(void)
 {
 	BSTreeNode *pRoot = NULL;
 	BSTreeNode *pDoubleLinkHead = NULL;
 		
-	printf("Binary Sort Tree:10 6 14 4 8 12 16\n");
+	printf("Binary Sort Tree:10 6 14 4 8 12 16 \n");
 	pRoot =BSTreeInsertNode(pRoot,10);
 	BSTreeInsertNode(pRoot,6);
 	BSTreeInsertNode(pRoot,14);
@@ -228,10 +252,16 @@ int main(void)
 	BSTreeInsertNode(pRoot,16);
 
 	BSTreePrint(pRoot);
-	//printf("\n £º");
+	printf("Start Execute:BSTreeMirro!\n");
+	BSTreeMirro(pRoot);
+	BSTreePrint(pRoot);
+
 	pDoubleLinkHead = ConvertNodeByMid(pRoot);
 //	pDoubleLinkHead = BSTreeToDoubleList(pRoot);
 	DoubleListPrint(pDoubleLinkHead);
+
+
+
 
 	BSTreeDestory(pRoot);
 
